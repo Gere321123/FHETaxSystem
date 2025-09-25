@@ -47,9 +47,6 @@ contract FHETaxSystem is SepoliaConfig {
         
         taxpayerAddresses.push(taxpayerAddress);
         
-        FHE.allowThis(taxAmount);
-        FHE.allow(taxAmount, taxpayerAddress);
-        
         emit TaxPayerAdded(taxpayerAddress);
     }
     
@@ -63,12 +60,7 @@ contract FHETaxSystem is SepoliaConfig {
         euint32 paymentAmount = FHE.fromExternal(encryptedPaymentAmount, paymentProof);
         
         taxpayer.paidAmount = FHE.add(taxpayer.paidAmount, paymentAmount);
-        
-        checkTaxPayment(msg.sender);
 
-        FHE.allowThis(taxpayer.paidAmount);
-        FHE.allow(taxpayer.paidAmount, msg.sender);
-        
         emit TaxPaid(msg.sender, block.timestamp);
     }
 
@@ -84,9 +76,6 @@ contract FHETaxSystem is SepoliaConfig {
 
         taxpayer.taxAmount = newTaxAmount;
         
-        FHE.allowThis(newTaxAmount);
-        FHE.allow(newTaxAmount, taxpayerAddress);
-        
         emit TaxAmountUpdated(taxpayerAddress, block.timestamp);
     }
     
@@ -99,11 +88,6 @@ contract FHETaxSystem is SepoliaConfig {
         }
         return false;
     }
-    
-    function verifyTaxPayment(address taxpayerAddress) external onlyTaxAuthority returns (bool) {
-        return checkTaxPayment(taxpayerAddress);
-    }
-    
     
     function getAllTaxpayers() external view onlyTaxAuthority returns (address[] memory) {
         return taxpayerAddresses;
